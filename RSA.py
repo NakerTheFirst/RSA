@@ -10,18 +10,24 @@ def generate_prime():
 
 
 def gcd(a, b):
-    if a == 0:
-        return b
-
     if b == 0:
         return a
 
-    # Swap the values so `a` is always bigger
-    if a < b:
-        a, b = b, a
+    return gcd(b, a % b)
 
-    remainder = a % b
-    return gcd(b, remainder)
+
+def extended_gcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    else:
+        gcd, x1, y1 = extended_gcd(b % a, a)
+        x = y1 - (b // a) * x1
+        y = x1
+        return gcd, x, y
+
+
+def is_coprime(a, b):
+    return gcd(a, b) == 1
 
 
 def main():
@@ -39,7 +45,10 @@ def main():
 
     pub_exp = 65537
 
-    print(gcd(270, 192))
+    if not is_coprime(modulus, pub_exp):
+        raise Exception(f"Modulus: {modulus} is not coprime to {pub_exp}")
+
+    d = extended_gcd(modulus, pub_exp)
 
     return 0
 
